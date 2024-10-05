@@ -2,6 +2,12 @@ const boardSize = 4;
 let board = [];
 let gameOver = false;
 
+// Variables to track touch start and end positions for swipe
+let touchStartX = 0;
+let touchStartY = 0;
+let touchEndX = 0;
+let touchEndY = 0;
+
 function initBoard() {
     // Initialize an empty board
     board = Array(boardSize).fill().map(() => Array(boardSize).fill(0));
@@ -143,6 +149,44 @@ function showGameOverMessage() {
     restartButton.style.padding = '10px 20px';
     restartButton.onclick = () => location.reload(); // Reload the page to restart the game
     gameBoard.appendChild(restartButton);
+}
+
+// Swipe event handlers
+document.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+    touchStartY = e.changedTouches[0].screenY;
+});
+
+document.addEventListener('touchmove', (e) => {
+    e.preventDefault();  // Prevent scrolling on mobile devices
+    touchEndX = e.changedTouches[0].screenX;
+    touchEndY = e.changedTouches[0].screenY;
+}, { passive: false });
+
+document.addEventListener('touchend', (e) => {
+    handleSwipe();
+});
+
+// Detect the swipe direction
+function handleSwipe() {
+    let deltaX = touchEndX - touchStartX;
+    let deltaY = touchEndY - touchStartY;
+
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        // Horizontal swipe
+        if (deltaX > 0) {
+            moveRight();
+        } else {
+            moveLeft();
+        }
+    } else {
+        // Vertical swipe
+        if (deltaY > 0) {
+            moveDown();
+        } else {
+            moveUp();
+        }
+    }
 }
 
 document.addEventListener('keydown', (e) => {
