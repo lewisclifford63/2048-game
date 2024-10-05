@@ -7,6 +7,7 @@ let touchStartX = 0;
 let touchStartY = 0;
 let touchEndX = 0;
 let touchEndY = 0;
+const swipeThreshold = 45; // Set the minimum swipe distance in pixels
 
 function initBoard() {
     // Initialize an empty board
@@ -167,10 +168,15 @@ document.addEventListener('touchend', (e) => {
     handleSwipe();
 });
 
-// Detect the swipe direction
+// Detect the swipe direction with threshold
 function handleSwipe() {
     let deltaX = touchEndX - touchStartX;
     let deltaY = touchEndY - touchStartY;
+
+    // Ignore small swipes by checking if the swipe is longer than the threshold
+    if (Math.abs(deltaX) < swipeThreshold && Math.abs(deltaY) < swipeThreshold) {
+        return; // Don't trigger any moves if the swipe is too short (like a tap)
+    }
 
     if (Math.abs(deltaX) > Math.abs(deltaY)) {
         // Horizontal swipe
